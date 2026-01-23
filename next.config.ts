@@ -10,6 +10,7 @@ if (!env.NEXT_RUNTIME) {
 }
 
 let nextConfig: NextConfig = {
+  basePath: "/soporte",
   reactStrictMode: !env.DISABLE_STRICT_MODE,
   /** We already do linting as separate tasks in CI */
   eslint: { ignoreDuringBuilds: true },
