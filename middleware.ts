@@ -1,7 +1,15 @@
-import { NextRequest } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-export const middleware = (request: NextRequest) => updateSession(request);
+export const middleware = (request: NextRequest) => {
+  // Skip auth redirects when accessed via Laborario's rewrite proxy
+  // (already protected by Laborario's Basic Auth)
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  if (forwardedHost && !forwardedHost.includes("helper")) {
+    return NextResponse.next();
+  }
+  return updateSession(request);
+};
 
 export const config = {
   matcher: [
