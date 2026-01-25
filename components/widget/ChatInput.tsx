@@ -322,7 +322,7 @@ export default function ChatInput({
 
   return (
     <div
-      className={cn("border-t border-black p-4 bg-background", {
+      className={cn("border-t border-border p-4 bg-background", {
         "bg-muted": isDragOver,
       })}
       onDragOver={handleDragOver}
@@ -419,9 +419,9 @@ export default function ChatInput({
               stiffness: 600,
               damping: 30,
             }}
-            className="absolute bottom-full left-4 right-4 mb-2 bg-red-50 border border-red-200 rounded-lg p-2 shadow-lg z-50"
+            className="absolute bottom-full left-4 right-4 mb-2 bg-destructive/10 border border-destructive/50 rounded-lg p-2 shadow-lg z-50"
           >
-            <div className="text-sm text-red-600">{fileError}</div>
+            <div className="text-sm text-destructive">{fileError}</div>
           </motion.div>
         )}
         {selectedFiles.length > 0 && (
@@ -440,16 +440,16 @@ export default function ChatInput({
               <TooltipProvider key={key} delayDuration={100}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="relative border border-black rounded flex items-center gap-2">
+                    <div className="relative border border-border rounded flex items-center gap-2 bg-card">
                       <img src={objectUrl} alt={file.name} className="w-10 h-10 object-cover rounded-l" />
-                      <div className="text-sm truncate max-w-20 text-black">{file.name}</div>
+                      <div className="text-sm truncate max-w-20 text-foreground">{file.name}</div>
                       <button
                         type="button"
                         className="p-2 pl-0"
                         onClick={() => removeFile(index)}
                         aria-label={`Remove ${file.name}`}
                       >
-                        <X className="w-3 h-3 text-black" />
+                        <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
                       </button>
                     </div>
                   </TooltipTrigger>
@@ -480,7 +480,7 @@ export default function ChatInput({
                   setIncludeScreenshot(e === true);
                   if (!e) setScreenshotState({ state: "initial" });
                 }}
-                className="border-muted-foreground data-[state=checked]:bg-black data-[state=checked]:text-white"
+                className="border-muted-foreground data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                 disabled={screenshotState.state === "capturing"}
               />
               <label
@@ -495,7 +495,7 @@ export default function ChatInput({
               </label>
             </div>
             {screenshotState.state === "error" && (
-              <div className="text-xs text-red-600 ml-6">{screenshotState.error}</div>
+              <div className="text-xs text-destructive ml-6">{screenshotState.error}</div>
             )}
           </motion.div>
         )}

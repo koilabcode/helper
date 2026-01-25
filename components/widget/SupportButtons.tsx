@@ -111,16 +111,16 @@ export default function SupportButtons({
         exit={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.3 }}
       >
-        <div className={cn("absolute inset-0 bg-black/5")} />
-        <div className="absolute inset-0 flex items-center gap-2 px-3">
-          <ThumbsDown className="h-4 w-4 text-red-500" />
+        <div className={cn("absolute inset-0 bg-foreground/5")} />
+        <div className="absolute inset-0 flex items-center gap-2 px-3 text-foreground">
+          <ThumbsDown className="h-4 w-4 text-destructive" />
           Why didn't this help? Be as specific as you can.
           <button className="ml-auto" onClick={() => setDismissedAddDetails(true)}>
             <X className="h-4 w-4" />
           </button>
         </div>
         <div className={cn(arrowBase, isGumroadTheme ? "border-t-gumroad-bg" : "border-t-background")} />
-        <div className={cn(arrowBase, "border-t-black/5")} />
+        <div className={cn(arrowBase, "border-t-foreground/5")} />
       </motion.div>
     );
   }
@@ -135,8 +135,8 @@ export default function SupportButtons({
       <button
         onClick={handleHelpfulClick}
         className={`flex items-center gap-2 rounded-full border ${
-          isHelpful ? "border-green-500 bg-green-100 text-green-700" : "border-gray-400 text-black"
-        } px-4 py-2 text-sm ${isHelpful ? "" : "hover:bg-gray-100"} transition-colors duration-200`}
+          isHelpful ? "border-success bg-success/10 text-success" : "border-border text-foreground"
+        } px-4 py-2 text-sm ${isHelpful ? "" : "hover:bg-muted"} transition-colors duration-200`}
       >
         <motion.div
           className="w-4 h-4 origin-bottom-left"
@@ -156,14 +156,14 @@ export default function SupportButtons({
                 }
           }
         >
-          <ThumbsUp className={`h-4 w-4 ${isHelpful ? "text-green-600" : ""}`} />
+          <ThumbsUp className={`h-4 w-4 ${isHelpful ? "text-success" : ""}`} />
         </motion.div>
         That solved it!
       </button>
       {clickedAddDetailsOnMessageId ? (
         <button
           onClick={handleTalkToTeamClick}
-          className="flex items-center gap-2 rounded-full border border-gray-400 text-black px-4 py-2 text-sm hover:bg-gray-100 transition-colors duration-200"
+          className="flex items-center gap-2 rounded-full border border-border text-foreground px-4 py-2 text-sm hover:bg-muted transition-colors duration-200"
         >
           <motion.div
             className="w-4 h-4 origin-center"
@@ -190,7 +190,7 @@ export default function SupportButtons({
       ) : (
         <button
           onClick={handleAddDetailsClick}
-          className="flex items-center gap-2 rounded-full border border-gray-400 text-black px-4 py-2 text-sm hover:bg-gray-100 transition-colors duration-200"
+          className="flex items-center gap-2 rounded-full border border-border text-foreground px-4 py-2 text-sm hover:bg-muted transition-colors duration-200"
         >
           <motion.div
             className="w-4 h-4 origin-center"

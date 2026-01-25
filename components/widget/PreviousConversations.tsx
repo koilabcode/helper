@@ -27,12 +27,12 @@ type Props = {
 
 function ConversationSkeleton() {
   return (
-    <div className="w-full rounded-lg border border-gray-200 bg-white p-4">
+    <div className="w-full rounded-lg border border-border bg-card p-4">
       <div className="flex items-center justify-between">
-        <div className="h-4 w-1/2 animate-skeleton rounded bg-gray-100" />
-        <div className="h-3 w-16 animate-skeleton rounded bg-gray-100" />
+        <div className="h-4 w-1/2 animate-skeleton rounded bg-muted" />
+        <div className="h-3 w-16 animate-skeleton rounded bg-muted" />
       </div>
-      <div className="mt-2 h-8 w-3/4 animate-skeleton rounded bg-gray-100" />
+      <div className="mt-2 h-8 w-3/4 animate-skeleton rounded bg-muted" />
     </div>
   );
 }
@@ -101,7 +101,7 @@ export default function PreviousConversations({ token, onSelectConversation, isA
           ))}
         </div>
       ) : isCleared || conversations.length === 0 ? (
-        <div className="flex h-40 items-center justify-center text-gray-500">No previous conversations found</div>
+        <div className="flex h-40 items-center justify-center text-muted-foreground">No previous conversations found</div>
       ) : (
         <div className="space-y-3">
           {isAnonymous && (
@@ -110,9 +110,9 @@ export default function PreviousConversations({ token, onSelectConversation, isA
                 <TooltipTrigger asChild>
                   <button
                     onClick={handleClearHistory}
-                    className="absolute flex items-center justify-center bottom-4 right-4 w-10 h-10 bg-white border border-gray-200 rounded-full hover:border-black transition-colors"
+                    className="absolute flex items-center justify-center bottom-4 right-4 w-10 h-10 bg-card border border-border rounded-full hover:border-primary transition-colors"
                   >
-                    <Trash2 className="h-5 w-5 text-black" />
+                    <Trash2 className="h-5 w-5 text-foreground" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>Clear history</TooltipContent>
@@ -123,7 +123,7 @@ export default function PreviousConversations({ token, onSelectConversation, isA
             <button
               key={conversation.slug}
               onClick={() => onSelectConversation(conversation.slug)}
-              className="group w-full overflow-hidden rounded-lg border border-gray-200 bg-white p-4 text-left transition-all hover:border-black hover:shadow-xs"
+              className="group w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-all hover:border-primary hover:shadow-xs"
             >
               <div className="flex items-center justify-between">
                 <div className="text-sm font-medium text-foreground">{conversation.subject}</div>
@@ -132,7 +132,7 @@ export default function PreviousConversations({ token, onSelectConversation, isA
                 </div>
               </div>
               {conversation.latestMessage && (
-                <div className="mt-2 line-clamp-2 text-sm text-gray-600 group-hover:text-gray-900">
+                <div className="mt-2 line-clamp-2 text-sm text-muted-foreground group-hover:text-foreground">
                   {conversation.latestMessage}
                 </div>
               )}
@@ -141,7 +141,7 @@ export default function PreviousConversations({ token, onSelectConversation, isA
           {hasNextPage && (
             <div ref={ref} className="flex justify-center py-4">
               {isFetchingNextPage && (
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-black" />
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-primary" />
               )}
             </div>
           )}

@@ -9,7 +9,7 @@ const Table = ({ className, ref, ...props }: React.ComponentPropsWithRef<"table"
 Table.displayName = "Table";
 
 const TableHeader = ({ className, ref, ...props }: React.ComponentPropsWithRef<"thead">) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+  <thead ref={ref} className={cn("[&_tr]:border-b [&_tr]:border-border", className)} {...props} />
 );
 TableHeader.displayName = "TableHeader";
 
@@ -19,14 +19,14 @@ const TableBody = ({ className, ref, ...props }: React.ComponentPropsWithRef<"tb
 TableBody.displayName = "TableBody";
 
 const TableFooter = ({ className, ref, ...props }: React.ComponentPropsWithRef<"tfoot">) => (
-  <tfoot ref={ref} className={cn("border-t bg-muted/50 font-medium last:[&>tr]:border-b-0", className)} {...props} />
+  <tfoot ref={ref} className={cn("border-t border-border bg-card font-medium last:[&>tr]:border-b-0", className)} {...props} />
 );
 TableFooter.displayName = "TableFooter";
 
 const TableRow = ({ className, ref, ...props }: React.ComponentPropsWithRef<"tr">) => (
   <tr
     ref={ref}
-    className={cn("border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", className)}
+    className={cn("border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", className)}
     {...props}
   />
 );
@@ -36,7 +36,7 @@ const TableHead = ({ className, ref, ...props }: React.ComponentPropsWithRef<"th
   <th
     ref={ref}
     className={cn(
-      "h-12 px-4 text-left align-middle text-xs font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+      "h-10 px-2 text-left align-middle text-sm font-medium text-foreground whitespace-nowrap [&:has([role=checkbox])]:pr-0",
       className,
     )}
     {...props}
@@ -45,7 +45,7 @@ const TableHead = ({ className, ref, ...props }: React.ComponentPropsWithRef<"th
 TableHead.displayName = "TableHead";
 
 const TableCell = ({ className, ref, ...props }: React.ComponentPropsWithRef<"td">) => (
-  <td ref={ref} className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)} {...props} />
+  <td ref={ref} className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0", className)} {...props} />
 );
 TableCell.displayName = "TableCell";
 

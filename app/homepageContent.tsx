@@ -31,13 +31,13 @@ const ChatWidget = ({
   });
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="border-b p-4">
+    <div className="min-h-screen flex flex-col bg-background">
+      <div className="border-b border-border bg-card p-4">
         <div className="max-w-4xl mx-auto flex items-center gap-4">
-          <Button variant="ghost" onClick={onBack}>
+          <Button variant="ghost" onClick={onBack} iconOnly size="sm">
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-xl font-bold">{mailboxName} Answers</h1>
+          <h1 className="text-xl font-bold text-white">{mailboxName} Answers</h1>
         </div>
       </div>
 
@@ -47,34 +47,34 @@ const ChatWidget = ({
             {messages.map((message) => (
               <div
                 className={cn(
-                  "rounded-lg p-3 max-w-[80%]",
-                  message.role === "user" ? "ml-auto bg-primary" : "border border-primary",
+                  "rounded-xl p-4 max-w-[80%]",
+                  message.role === "user" ? "ml-auto bg-primary" : "bg-card",
                 )}
                 key={message.id}
               >
                 <MessageContent
-                  className={cn("prose prose-sm max-w-none", {
+                  className={cn("prose prose-sm max-w-none prose-invert", {
                     "text-primary-foreground": message.role === "user",
                   })}
                   message={message}
                 />
               </div>
             ))}
-            {agentTyping && <div className="animate-default-pulse text-muted">An agent is typing...</div>}
+            {agentTyping && <div className="animate-default-pulse text-muted-foreground">An agent is typing...</div>}
             {status === "submitted" && (
               <div className="flex items-center gap-1">
-                <div className="size-2 bg-foreground rounded-full animate-default-pulse [animation-delay:-0.3s]" />
-                <div className="size-2 bg-foreground rounded-full animate-default-pulse [animation-delay:-0.15s]" />
-                <div className="size-2 bg-foreground rounded-full animate-default-pulse" />
+                <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.3s]" />
+                <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.15s]" />
+                <div className="size-2 bg-primary rounded-full animate-default-pulse" />
               </div>
             )}
           </div>
         </div>
       </div>
 
-      <div className="border-t p-4">
+      <div className="border-t border-border bg-card p-4">
         <div className="max-w-4xl mx-auto">
-          <form onSubmit={handleSubmit} className="flex gap-2">
+          <form onSubmit={handleSubmit} className="flex gap-3">
             <Input
               placeholder="Type your message..."
               value={input}
@@ -87,7 +87,7 @@ const ChatWidget = ({
                 }
               }}
             />
-            <Button type="submit" className="bg-orange-500 hover:bg-orange-600">
+            <Button type="submit">
               Send
             </Button>
           </form>
@@ -132,10 +132,11 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
   }
 
   return (
-    <div className="min-h-dvh">
-      <div className="max-w-4xl mx-auto px-4 py-24">
+    <div className="min-h-dvh bg-background">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">{mailboxName} Answers</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">{mailboxName} Answers</h1>
+          <p className="text-muted-foreground">How can we help you today?</p>
         </div>
 
         <div className="mb-12">
@@ -144,7 +145,7 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Ask a question"
-              className="w-full px-6 py-4 text-lg rounded-full pr-16"
+              className="w-full h-12 px-6 text-base rounded-full pr-14 bg-card border-border"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && question.trim()) {
                   handleQuestionClick();
@@ -154,25 +155,25 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
             <button
               onClick={() => question.trim() && handleQuestionClick()}
               disabled={!question.trim()}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50 transition-colors"
             >
-              <ChevronRight className="h-6 w-6" />
+              <ChevronRight className="h-5 w-5" />
             </button>
           </div>
         </div>
 
         <div className="mb-8">
           {error ? null : isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="flex flex-col gap-3 p-4.5 border rounded-lg">
+                <div key={i} className="flex flex-col gap-3 p-6 rounded-xl bg-card">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-4 w-1/2" />
                 </div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {sampleQuestions?.map((question, index) => (
                 <button
                   key={index}
@@ -180,11 +181,11 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
                     setQuestion(question.text);
                     handleQuestionClick();
                   }}
-                  className="p-4 border rounded-lg hover:bg-secondary text-left transition-colors"
+                  className="p-6 rounded-xl bg-card text-left transition-colors hover:bg-secondary"
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start gap-4">
                     <span className="text-2xl">{question.emoji}</span>
-                    {question.text}
+                    <span className="text-foreground">{question.text}</span>
                   </div>
                 </button>
               ))}

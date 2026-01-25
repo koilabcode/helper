@@ -3,20 +3,24 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex h-5 items-center whitespace-nowrap rounded px-2 uppercase tracking-wide transition-colors focus:outline-hidden",
+  "inline-flex items-center whitespace-nowrap rounded-full border px-2 py-0.5 text-xs font-medium transition-colors focus:outline-hidden",
   {
     variants: {
       variant: {
-        default: "text-foreground bg-secondary",
-        dark: "text-primary-foreground bg-primary",
-        bright: "text-bright-foreground bg-bright",
-        success: "text-success-foreground bg-success",
-        "success-light": "text-success bg-success/10",
-        destructive: "text-destructive-foreground bg-destructive",
-        gray: "text-muted-foreground bg-muted/80",
+        default: "border-transparent bg-primary text-primary-foreground",
+        secondary: "border-transparent bg-secondary text-secondary-foreground",
+        dark: "border-transparent bg-primary text-primary-foreground",
+        bright: "border-transparent bg-accent text-accent-foreground",
+        success: "border-green-400/50 bg-green-500/10 text-green-400",
+        "success-light": "border-green-400/50 bg-green-500/10 text-green-400",
+        destructive: "border-red-400/50 bg-red-500/10 text-red-400",
+        warning: "border-yellow-400/50 bg-yellow-500/10 text-yellow-400",
+        gray: "border-gray-400/50 bg-gray-500/10 text-gray-400",
+        outline: "border-border text-foreground",
       },
       size: {
-        default: "text-xxs",
+        default: "text-xs",
+        sm: "text-xxs px-1.5 py-0",
       },
     },
     defaultVariants: {
