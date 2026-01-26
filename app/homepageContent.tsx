@@ -194,7 +194,7 @@ const StaticFAQView = ({
 
             {/* Option to continue with AI */}
             <div className="flex justify-center mt-4">
-              <Button variant="outline" onClick={onStartChat} className="gap-2">
+              <Button variant="outlined" onClick={onStartChat} className="gap-2">
                 <MessageCircle className="h-4 w-4" />
                 ¿Necesitas más ayuda? Habla con nuestro asistente
               </Button>
