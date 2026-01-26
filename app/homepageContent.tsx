@@ -173,7 +173,7 @@ const StaticFAQView = ({
           <Button variant="ghost" onClick={onBack} iconOnly size="sm">
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-xl font-bold text-white">Soporte {mailboxName}</h1>
+          <h1 className="text-xl font-bold text-white">Soporte de {mailboxName}</h1>
         </div>
       </div>
 
@@ -232,7 +232,7 @@ const ChatWidget = ({
           <Button variant="ghost" onClick={onBack} iconOnly size="sm">
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-xl font-bold text-white">Soporte {mailboxName}</h1>
+          <h1 className="text-xl font-bold text-white">Soporte de {mailboxName}</h1>
         </div>
       </div>
 
@@ -351,7 +351,7 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
     <div className="min-h-dvh bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Soporte {mailboxName}</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Soporte de {mailboxName}</h1>
           <p className="text-muted-foreground">¿En qué podemos ayudarte hoy?</p>
         </div>
 
