@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Migrations run separately (not from Vercel build due to IPv6 limitations)
-if [[ $VERCEL_ENV == "production"  ]] ; then
-  pnpm run build
-else
-  pnpm run build
-fi
+# Packages are already built by postinstall, so we only need to run next build
+# This cuts build time roughly in half
+pnpm next build
