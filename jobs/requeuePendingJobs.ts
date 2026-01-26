@@ -20,7 +20,7 @@ export const requeuePendingJobs = async () => {
   }));
 
   for (const batch of chunk(payloads, BATCH_SIZE)) {
-    await db.execute(sql`SELECT pgmq.send_batch('jobs', ARRAY[${sql.join(batch, sql`,`)}]::jsonb[])`);
+    await db.execute(sql`SELECT pgmq.send_batch('jobs'::text, ARRAY[${sql.join(batch, sql`,`)}]::jsonb[])`);
   }
 
   return { requeuedCount: stalePendingJobs.length };
