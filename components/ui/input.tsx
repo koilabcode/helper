@@ -18,9 +18,11 @@ const Input = ({ className, type, onModEnter, iconsSuffix, iconsPrefix, hint, re
         <input
           type={type}
           className={cn(
-            "w-full rounded-lg bg-background border border-border text-sm focus:border-transparent focus:outline-hidden focus:ring-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+            "h-9 w-full rounded-md border border-input bg-secondary/30 px-3 py-1 text-base text-foreground transition-colors",
             "placeholder:text-muted-foreground",
-            "text-base",
+            "focus-visible:outline-none focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/50",
+            "disabled:cursor-not-allowed disabled:opacity-50",
+            "aria-invalid:ring-destructive/20 aria-invalid:border-destructive",
             iconsPrefix && "pl-10",
             className,
           )}

@@ -220,6 +220,37 @@
   }
 }
 
+/* Laborario koilab-dark theme for public widget */
+
+@layer base {
+  .koilab-dark {
+    --background: #181824; /* Page background */
+    --foreground: #ffffff; /* Primary text */
+    --card: #252536; /* Card background */
+    --card-foreground: #ffffff;
+    --popover: #252536;
+    --popover-foreground: #ffffff;
+    --primary: #a3b18a; /* Moss green - primary actions */
+    --primary-foreground: #181824;
+    --secondary: #2a2a3e; /* Input/secondary background */
+    --secondary-foreground: #ffffff;
+    --muted: #2a2a3e;
+    --muted-foreground: #9ca3af; /* gray-400 */
+    --accent: #c9a96e; /* Tan - accent color */
+    --accent-foreground: #181824;
+    --destructive: hsl(0 84% 60%);
+    --destructive-foreground: #ffffff;
+    --success: #5f964f; /* Moss success */
+    --success-foreground: #ffffff;
+    --border: #374151; /* gray-700 */
+    --input: #374151;
+    --ring: #a3b18a; /* Moss focus ring */
+    --radius: 0.75rem;
+    --bright: #c9a96e; /* Accent tan */
+    --bright-foreground: #181824;
+  }
+}
+
 /* Docs theme */
 
 @theme {

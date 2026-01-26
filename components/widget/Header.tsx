@@ -40,7 +40,7 @@ const Header = React.memo(function Header({ config, onShowPreviousConversations,
   const shouldShowMinimizeButton = config.viewportWidth ? config.viewportWidth >= 640 : true;
 
   return (
-    <div className="flex items-start justify-between border-b border-black p-1.5">
+    <div className="flex items-start justify-between border-b border-border p-1.5">
       <div className="flex items-center h-full">
         <div className="ml-2 flex flex-col gap-0.5">
           <h2 className="text-base leading-5 text-foreground">{title}</h2>

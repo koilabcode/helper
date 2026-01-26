@@ -1,5 +1,26 @@
+/* Laborario koilab-dark theme colors */
 .bg-widget {
-  background-color: #f4f4f0;
+  background-color: #181824;
+}
+
+.bg-widget-card {
+  background-color: #252536;
+}
+
+.border-widget {
+  border-color: #374151;
+}
+
+.text-widget-primary {
+  color: #a3b18a;
+}
+
+.text-widget-accent {
+  color: #c9a96e;
+}
+
+.text-widget-muted {
+  color: #9ca3af;
 }
 
 .ball-1 {
@@ -67,6 +88,6 @@
     margin: 0 auto;
   }
   .helper-widget-wrapper {
-    border-left: 1px solid black;
+    border-left: 1px solid #374151;
   }
 }

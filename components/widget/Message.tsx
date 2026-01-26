@@ -88,11 +88,11 @@ export default function Message({
       <div
         className={cx("rounded-lg max-w-full", {
           "bg-primary text-primary-foreground": message.role === USER_ROLE,
-          "border border-black bg-background text-foreground": message.role !== USER_ROLE,
+          "border border-border bg-card text-foreground": message.role !== USER_ROLE,
         })}
       >
         {userAnnotation ? (
-          <div className="p-4 pb-0 flex items-center text-gray-500 text-xs font-bold">
+          <div className="p-4 pb-0 flex items-center text-muted-foreground text-xs font-bold">
             {userAnnotation.user.firstName}
           </div>
         ) : null}
@@ -152,15 +152,15 @@ export default function Message({
         )}
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-xs text-gray-400" title={message.createdAt ? message.createdAt.toLocaleString() : ""}>
+        <span className="text-xs text-muted-foreground" title={message.createdAt ? message.createdAt.toLocaleString() : ""}>
           {message.createdAt ? <HumanizedTime time={message.createdAt.toISOString()} /> : null}
         </span>
         {promptInfo && (
           <>
-            <span className="text-xs text-gray-400">·</span>
+            <span className="text-xs text-muted-foreground">·</span>
             <button
               onClick={() => togglePromptInfo({ promptInfo, message, allMessages })}
-              className="text-xs text-gray-400 hover:text-gray-600 underline"
+              className="text-xs text-muted-foreground hover:text-foreground underline"
             >
               Details
             </button>

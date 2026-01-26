@@ -179,7 +179,7 @@ export const triggerEvent = async <T extends EventName>(
       jobRunId: assertDefined(runs.find((run) => run.job === job)).id,
     }));
     await tx.execute(
-      sql`SELECT pgmq.send_batch('jobs', ARRAY[${sql.join(payloads, sql`,`)}]::jsonb[], ${sleepSeconds})`,
+      sql`SELECT pgmq.send_batch('jobs'::text, ARRAY[${sql.join(payloads, sql`,`)}]::jsonb[], ${sleepSeconds}::integer)`,
     );
   });
 };

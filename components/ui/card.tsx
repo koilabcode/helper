@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 const Card = ({ className, ref, ...props }: React.ComponentPropsWithRef<"div">) => {
   return (
-    <div ref={ref} className={cn("rounded-lg border bg-card text-card-foreground shadow-xs", className)} {...props} />
+    <div ref={ref} className={cn("rounded-xl bg-card text-card-foreground", className)} {...props} />
   );
 };
 Card.displayName = "Card";

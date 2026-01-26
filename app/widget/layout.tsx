@@ -20,7 +20,7 @@ export const viewport = { width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={cx("h-full")}>
+    <html lang="en" suppressHydrationWarning className={cx("h-full koilab-dark")}>
       <body
         className="h-full overflow-y-hidden antialiased text-foreground bg-background font-regular"
         suppressHydrationWarning

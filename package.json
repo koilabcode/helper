@@ -18,6 +18,7 @@
     "db:setup-cron": "pnpm run with-dev-env pnpm db:prod:setup-cron",
     "db:prod:setup-cron": "pnpm tsx --conditions=react-server ./db/setupCron.ts",
     "db:seed": "pnpm services:start && pnpm run with-dev-env pnpm tsx --conditions=react-server ./db/seeds/seedDatabase.ts",
+    "db:seed:laborario": "pnpm services:start && pnpm run with-dev-env pnpm tsx --conditions=react-server ./db/seeds/seedLaborario.ts",
     "db:clear": "pnpm services:start && pnpm supabase db reset && pnpm db:migrate",
     "db:reset": "pnpm ensure-ssl-certificates && pnpm db:clear && pnpm db:seed",
     "db:delete-saved-replies": "pnpm run with-dev-env pnpm tsx --conditions=react-server ./scripts/delete-saved-replies.ts",
