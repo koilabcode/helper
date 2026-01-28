@@ -34,9 +34,6 @@ importers:
       '@hookform/resolvers':
         specifier: 3.3.4
         version: 3.3.4(react-hook-form@7.58.1(react@19.1.2))
-      '@laborario/ui':
-        specifier: link:../laborario/packages/ui
-        version: link:../laborario/packages/ui
       '@lifeomic/attempt':
         specifier: ^3.1.0
         version: 3.1.0
