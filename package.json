@@ -24,6 +24,7 @@
     "db:delete-saved-replies": "pnpm run with-dev-env pnpm tsx --conditions=react-server ./scripts/delete-saved-replies.ts",
     "db:backfill-last-message-at": "pnpm run with-dev-env pnpm tsx --conditions=react-server ./scripts/backfillLastMessageAt.ts",
     "dev": "bash scripts/dev.sh",
+    "sync-laborario-ui": "bash scripts/sync-laborario-ui.sh",
     "dev:email": "pnpm run with-dev-env email dev --dir lib/emails --port 3060",
     "dev:next": "lsof -ti:3010 | xargs kill -9 || true && pnpm next dev --turbopack -H 0.0.0.0",
     "eval:dev": "EVALITE=true NODE_ENV=test pnpm run with-dev-env evalite watch",
