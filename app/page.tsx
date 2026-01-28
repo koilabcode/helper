@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { HelperClientProvider } from "@helperai/react";
 import { getBaseUrl } from "@/components/constants";
+import { PublicLayout } from "@/components/laborario/public-layout";
 import { getMailbox } from "@/lib/data/mailbox";
 import { TRPCReactProvider } from "@/trpc/react";
 import { HomepageContent } from "./homepageContent";
@@ -15,7 +16,9 @@ export default async function HomePage() {
   return (
     <TRPCReactProvider>
       <HelperClientProvider host={getBaseUrl()} session={{}}>
-        <HomepageContent mailboxName={mailbox.name} />
+        <PublicLayout>
+          <HomepageContent mailboxName={mailbox.name} />
+        </PublicLayout>
       </HelperClientProvider>
     </TRPCReactProvider>
   );
