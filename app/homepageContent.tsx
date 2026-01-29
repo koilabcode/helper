@@ -296,6 +296,7 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
   const [question, setQuestion] = useState("");
   const [selectedFAQ, setSelectedFAQ] = useState<(typeof LABORARIO_FAQS)[0] | null>(null);
   const [chatConversationSlug, setChatConversationSlug] = useState<string | null>(null);
+  const [isStartingChat, setIsStartingChat] = useState(false);
   const { client } = useHelperClient();
 
   // Get conversation details when conversationSlug is available
@@ -306,10 +307,15 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
   );
 
   const handleStartChat = async (initialQuestion?: string) => {
-    const result = await client.conversations.create();
-    setChatConversationSlug(result.conversationSlug);
-    if (initialQuestion) {
-      setQuestion(initialQuestion);
+    setIsStartingChat(true);
+    try {
+      const result = await client.conversations.create();
+      setChatConversationSlug(result.conversationSlug);
+      if (initialQuestion) {
+        setQuestion(initialQuestion);
+      }
+    } catch {
+      setIsStartingChat(false);
     }
   };
 
@@ -328,6 +334,22 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
         conversation={conversation}
         onBack={handleBackToMain}
       />
+    );
+  }
+
+  // Show loading while creating conversation
+  if (isStartingChat) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center gap-1">
+            <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.3s]" />
+            <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.15s]" />
+            <div className="size-2 bg-primary rounded-full animate-default-pulse" />
+          </div>
+          <p className="text-muted-foreground text-sm">Conectando con soporte...</p>
+        </div>
+      </div>
     );
   }
 
@@ -370,7 +392,7 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
             />
             <button
               onClick={() => question.trim() && handleStartChat()}
-              disabled={!question.trim()}
+              disabled={!question.trim() || isStartingChat}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50 transition-colors"
             >
               <ChevronRight className="h-5 w-5" />
