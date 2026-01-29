@@ -19,6 +19,7 @@ type Props = {
   addToolResult: ({ toolCallId, result }: { toolCallId: string; result: any }) => void;
   resumeGuide: GuideInstructions | null;
   status: string;
+  isCreatingConversation?: boolean;
 };
 
 export default function MessagesList({
@@ -32,6 +33,7 @@ export default function MessagesList({
   addToolResult,
   resumeGuide,
   status,
+  isCreatingConversation,
 }: Props) {
   const { scrollRef, contentRef } = useStickToBottom();
 
@@ -119,7 +121,7 @@ export default function MessagesList({
           );
         })}
 
-        {status === "submitted" && (
+        {(status === "submitted" || isCreatingConversation) && (
           <div className="flex flex-col gap-3">
             <LoadingMessage color={isGumroadTheme ? "gumroad-pink" : "primary"} />
           </div>
