@@ -114,7 +114,7 @@ let nextConfig: NextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors 'self';",
+            value: "frame-ancestors 'self' https://laborario.com;",
           },
           {
             key: "X-Content-Type-Options",
