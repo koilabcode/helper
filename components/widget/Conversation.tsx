@@ -4,6 +4,7 @@ import { AnimatePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { ConversationDetails } from "@helperai/client";
 import { ReadPageToolConfig } from "@helperai/sdk";
+import { apiPath } from "@/components/constants";
 import { assertDefined } from "@/components/utils/assert";
 import ChatInput from "@/components/widget/ChatInput";
 import { eventBus, messageQueue } from "@/components/widget/eventBus";
@@ -94,7 +95,7 @@ export default function Conversation({
       ]);
 
       if (selectedConversationSlug && token) {
-        fetch(`/api/chat/conversation/${selectedConversationSlug}`, {
+        fetch(apiPath(`/api/chat/conversation/${selectedConversationSlug}`), {
           method: "PATCH",
           body: JSON.stringify({ markRead: true }),
           headers: {
@@ -127,6 +128,7 @@ export default function Conversation({
     stop,
     addToolResult,
   } = useChat({
+    api: apiPath("/api/chat"),
     maxSteps: 3,
     generateId: () => `client_${Math.random().toString(36).slice(-6)}`,
     onToolCall({ toolCall }) {
@@ -188,7 +190,7 @@ export default function Conversation({
     queryKey: ["conversation", conversationSlug],
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const response = await fetch(`/api/chat/conversation/${conversationSlug}`, {
+      const response = await fetch(apiPath(`/api/chat/conversation/${conversationSlug}`), {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

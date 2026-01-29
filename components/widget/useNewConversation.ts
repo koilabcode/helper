@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { apiPath } from "@/components/constants";
 
 export const useNewConversation = (token: string | null) => {
   const [conversationSlug, setConversationSlug] = useState<string | null>(null);
@@ -11,7 +12,7 @@ export const useNewConversation = (token: string | null) => {
         throw new Error("Authentication token is required");
       }
 
-      const response = await fetch("/api/chat/conversation", {
+      const response = await fetch(apiPath("/api/chat/conversation"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

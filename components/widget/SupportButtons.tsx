@@ -1,5 +1,6 @@
 import { UIMessage } from "ai";
 import { MessagesSquare, ThumbsDown, ThumbsUp, X } from "lucide-react";
+import { apiPath } from "@/components/constants";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { captureExceptionAndLog } from "@/lib/shared/sentry";
@@ -57,7 +58,7 @@ export default function SupportButtons({
     setIsHelpful(true);
 
     try {
-      const response = await fetch(`/api/chat/conversation/${conversationSlug}/message/${persistedId}`, {
+      const response = await fetch(apiPath(`/api/chat/conversation/${conversationSlug}/message/${persistedId}`), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
