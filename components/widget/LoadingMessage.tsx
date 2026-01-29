@@ -10,13 +10,14 @@ export default function LoadingMessage({ color }: Props) {
   return (
     <div className="flex flex-col gap-2">
       <div className={cx("rounded-lg max-w-full border border-border bg-card text-foreground")}>
-        <div className="relative p-4">
+        <div className="relative p-4 flex items-center gap-3">
           <div className="relative h-4 w-20 overflow-hidden rounded-lg" data-testid="loading-spinner">
             <div className={`${loadingClasses} ball-1`}></div>
             <div className={`${loadingClasses} ball-2`}></div>
             <div className={`${loadingClasses} ball-3`}></div>
             <div className={`${loadingClasses} ball-4`}></div>
           </div>
+          <span className="text-sm text-muted-foreground">Thinking...</span>
         </div>
       </div>
     </div>

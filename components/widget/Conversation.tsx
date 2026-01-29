@@ -55,6 +55,7 @@ export default function Conversation({
   const [isProvidingDetails, setIsProvidingDetails] = useState(false);
   const { setIsNewConversation } = useWidgetView();
 
+  const [isCreatingConversation, setIsCreatingConversation] = useState(false);
   const [isAgentTyping, setIsAgentTyping] = useState(false);
   const agentTypingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
@@ -179,7 +180,7 @@ export default function Conversation({
     }
   }, [selectedConversationSlug, isNewConversation, setConversationSlug]);
 
-  const isLoading = status === "streaming" || status === "submitted";
+  const isLoading = status === "streaming" || status === "submitted" || isCreatingConversation;
   const lastAIMessage = messages?.findLast((msg) => msg.role === "assistant");
 
   const { data: conversation, isLoading: isLoadingConversation } = useQuery<{
@@ -305,7 +306,12 @@ export default function Conversation({
     try {
       let currentSlug = conversationSlug;
       if (!currentSlug) {
-        currentSlug = await createConversation({ isPrompt: false });
+        setIsCreatingConversation(true);
+        try {
+          currentSlug = await createConversation({ isPrompt: false });
+        } finally {
+          setIsCreatingConversation(false);
+        }
       }
 
       if (currentSlug) {
@@ -414,6 +420,7 @@ export default function Conversation({
         addToolResult={addToolResult}
         resumeGuide={resumeGuide}
         status={status}
+        isCreatingConversation={isCreatingConversation}
       />
       {isAgentTyping && (
         <div className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground">
