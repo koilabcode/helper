@@ -1,5 +1,6 @@
 import { useChat } from "@ai-sdk/react";
 import { UIMessage } from "ai";
+import { apiPath } from "@/components/constants";
 import cx from "classnames";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { GUIDE_INITIAL_PROMPT } from "@/lib/ai/constants";
@@ -77,7 +78,7 @@ export default function HelpingHand({
     if (!guideSessionId || !token) return;
 
     try {
-      await fetch("/api/guide/update", {
+      await fetch(apiPath("/api/guide/update"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,7 +103,7 @@ export default function HelpingHand({
   }, []);
 
   const { append, addToolResult } = useChat({
-    api: "/api/guide/action",
+    api: apiPath("/api/guide/action"),
     maxSteps: 10,
     generateId: () => `client_${Math.random().toString(36).slice(-6)}`,
     onToolCall({ toolCall }) {
@@ -230,7 +231,7 @@ export default function HelpingHand({
   const initializeGuideSession = async () => {
     try {
       setStatus("initializing");
-      const response = await fetch("/api/guide/start", {
+      const response = await fetch(apiPath("/api/guide/start"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

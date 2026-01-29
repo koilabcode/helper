@@ -1,5 +1,6 @@
 import { formatDuration } from "date-fns";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { apiPath } from "@/components/constants";
 import { useEffect, useState } from "react";
 import MessageMarkdown from "@/components/messageMarkdown";
 import type { MessageWithReaction } from "@/components/widget/Message";
@@ -50,7 +51,7 @@ export default function MessageElement({
     setShowReasoning(newShowReasoning);
     if (!messageId) return;
     try {
-      await fetch(`/api/chat/conversation/${conversationSlug}/message/${messageId}/event`, {
+      await fetch(apiPath(`/api/chat/conversation/${conversationSlug}/message/${messageId}/event`), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
