@@ -184,7 +184,7 @@ export function PublicHeader({ variant = "full", withBorder = false }: PublicHea
       userName: null,
       companyName: null,
     };
-    window.location.href = baseUrl;
+    window.top!.location.href = baseUrl;
   }
 
   const isActive = (link: NavLink) => {
@@ -218,7 +218,7 @@ export function PublicHeader({ variant = "full", withBorder = false }: PublicHea
       );
     }
     return (
-      <a key={key} href={href} className={className}>
+      <a key={key} href={href} className={className} target="_top">
         {children}
       </a>
     );
@@ -260,7 +260,7 @@ export function PublicHeader({ variant = "full", withBorder = false }: PublicHea
       <header className={`relative px-4 sm:px-6 lg:px-8 py-5 ${withBorder ? "border-b border-gray-700/50" : ""}`}>
         <div className="flex items-center justify-between lg:grid lg:grid-cols-[auto_1fr_auto] lg:gap-4">
           {/* Logo */}
-          <a href={baseUrl}>
+          <a href={baseUrl} target="_top">
             <Logo />
           </a>
 
@@ -284,6 +284,7 @@ export function PublicHeader({ variant = "full", withBorder = false }: PublicHea
                       <>
                         <a
                           href={`${baseUrl}/company-admin`}
+                          target="_top"
                           className="flex flex-col items-end text-xs text-gray-500 hover:text-gray-300 transition-colors"
                         >
                           {companyName && <span>{companyName}</span>}
@@ -300,12 +301,14 @@ export function PublicHeader({ variant = "full", withBorder = false }: PublicHea
                       <>
                         <a
                           href={`${baseUrl}/company-admin/login`}
+                          target="_top"
                           className="flex items-center px-5 py-2.5 rounded-full border border-[#a3b18a] text-[#a3b18a] text-sm font-medium hover:bg-[#a3b18a]/10 transition-all whitespace-nowrap"
                         >
                           Iniciar sesión
                         </a>
                         <a
                           href={`${baseUrl}/oferta-lanzamiento`}
+                          target="_top"
                           className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#a3b18a] text-[#181824] text-sm font-semibold hover:bg-[#b4c29b] transition-all whitespace-nowrap"
                         >
                           <svg
@@ -337,7 +340,7 @@ export function PublicHeader({ variant = "full", withBorder = false }: PublicHea
               </div>
             </>
           ) : (
-            <a href={baseUrl} className="text-gray-400 hover:text-white transition-colors text-sm">
+            <a href={baseUrl} target="_top" className="text-gray-400 hover:text-white transition-colors text-sm">
               Volver al inicio
             </a>
           )}
@@ -351,7 +354,7 @@ export function PublicHeader({ variant = "full", withBorder = false }: PublicHea
 
           <div className="absolute right-0 top-0 h-full w-72 bg-[#1e1e2e] shadow-xl">
             <div className="flex items-center justify-between px-4 py-5 border-b border-gray-700/50">
-              <a href={baseUrl}>
+              <a href={baseUrl} target="_top">
                 <Logo />
               </a>
               <button
@@ -372,6 +375,7 @@ export function PublicHeader({ variant = "full", withBorder = false }: PublicHea
                     <>
                       <a
                         href={`${baseUrl}/company-admin`}
+                        target="_top"
                         className="px-4 py-3 flex flex-col text-xs text-gray-500 hover:text-gray-300 transition-colors"
                       >
                         {companyName && <span>{companyName}</span>}
@@ -388,12 +392,14 @@ export function PublicHeader({ variant = "full", withBorder = false }: PublicHea
                     <>
                       <a
                         href={`${baseUrl}/company-admin/login`}
+                        target="_top"
                         className="flex items-center justify-center w-full px-4 py-3 rounded-lg border border-[#a3b18a] text-[#a3b18a] text-sm font-medium hover:bg-[#a3b18a]/10 transition-all"
                       >
                         Iniciar sesión
                       </a>
                       <a
                         href={`${baseUrl}/oferta-lanzamiento`}
+                        target="_top"
                         className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-[#a3b18a] text-[#181824] text-sm font-semibold hover:bg-[#b4c29b] transition-all"
                       >
                         <svg
