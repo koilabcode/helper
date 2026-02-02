@@ -1,9 +1,9 @@
 "use client";
 
 import { ArrowLeft, ChevronRight, MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ConversationDetails } from "@helperai/client";
-import { MessageContent, useChat, useConversation, useHelperClient } from "@helperai/react";
+import { MessageContent, useChat, useHelperClient } from "@helperai/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRunOnce } from "@/components/useRunOnce";
@@ -295,22 +295,27 @@ const ChatWidget = ({
 export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
   const [question, setQuestion] = useState("");
   const [selectedFAQ, setSelectedFAQ] = useState<(typeof LABORARIO_FAQS)[0] | null>(null);
-  const [chatConversationSlug, setChatConversationSlug] = useState<string | null>(null);
+  const [conversation, setConversation] = useState<ConversationDetails | null>(null);
   const [isStartingChat, setIsStartingChat] = useState(false);
   const { client } = useHelperClient();
 
-  // Get conversation details when conversationSlug is available
-  const { data: conversation } = useConversation(
-    chatConversationSlug!,
-    { enableRealtime: false },
-    { enabled: !!chatConversationSlug },
-  );
+  // Pre-initialize the widget session so the token is ready when the user submits
+  useEffect(() => {
+    client.initialize();
+  }, [client]);
 
   const handleStartChat = async (initialQuestion?: string) => {
     setIsStartingChat(true);
     try {
       const result = await client.conversations.create();
-      setChatConversationSlug(result.conversationSlug);
+      // Build ConversationDetails locally — the conversation is brand new and empty
+      setConversation({
+        slug: result.conversationSlug,
+        subject: null,
+        messages: [],
+        isEscalated: false,
+        experimental_guideSessions: [],
+      });
       if (initialQuestion) {
         setQuestion(initialQuestion);
       }
@@ -320,13 +325,13 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
   };
 
   const handleBackToMain = () => {
-    setChatConversationSlug(null);
+    setConversation(null);
     setSelectedFAQ(null);
     setQuestion("");
   };
 
   // Show AI chat
-  if (chatConversationSlug && conversation) {
+  if (conversation) {
     return (
       <ChatWidget
         mailboxName={mailboxName}
