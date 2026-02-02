@@ -124,8 +124,10 @@ export const fetchPromptRetrievalData = async (
   query: string,
   metadata: object | null,
 ): Promise<PromptRetrievalData> => {
-  const knowledgeBank = await findEnabledKnowledgeBankEntries();
-  const websitePages = await findSimilarWebsitePages(query);
+  const [knowledgeBank, websitePages] = await Promise.all([
+    findEnabledKnowledgeBankEntries(),
+    findSimilarWebsitePages(query),
+  ]);
 
   const metadataText = metadata ? `User metadata:\n${JSON.stringify(metadata, null, 2)}` : null;
 

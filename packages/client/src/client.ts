@@ -47,17 +47,28 @@ export class HelperClient {
   }
 
   private token: string | null = null;
-  private getToken = async (): Promise<string> => {
-    if (!this.token) await this.createSession();
+  getToken = async (): Promise<string> => {
+    if (!this.token) await this.initialize();
     return this.token!;
   };
 
   private supabaseParams: { url: string; anonKey: string } | null = null;
 
+  private sessionPromise: Promise<void> | null = null;
+
   private async createSession() {
     const { token, supabaseUrl, supabaseAnonKey } = await this.sessions.create(this.sessionParams);
     this.token = token;
     this.supabaseParams = { url: supabaseUrl, anonKey: supabaseAnonKey };
+  }
+
+  /** Pre-initialize the session token so it's ready when the first API call happens. */
+  initialize(): Promise<void> {
+    if (this.token) return Promise.resolve();
+    if (!this.sessionPromise) {
+      this.sessionPromise = this.createSession();
+    }
+    return this.sessionPromise;
   }
 
   private async handleErrorResponse(response: Response): Promise<never> {

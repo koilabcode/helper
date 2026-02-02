@@ -25,7 +25,7 @@ export type AvailableModel =
   | typeof GPT_5_MINI_MODEL;
 
 const EMBEDDING_MODEL = "text-embedding-3-small";
-export const CHAT_MODEL = _GPT_4_1_MODEL;
+export const CHAT_MODEL = _GPT_4_1_MINI_MODEL;
 export const MINI_MODEL = GPT_5_MINI_MODEL;
 
 export const generateEmbedding = async (

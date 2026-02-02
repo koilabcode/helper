@@ -1,12 +1,12 @@
 "use client";
 
+import { useChat as useAIChat } from "@ai-sdk/react";
 import { ArrowLeft, ChevronRight, MessageCircle } from "lucide-react";
-import { useState } from "react";
-import type { ConversationDetails } from "@helperai/client";
-import { MessageContent, useChat, useConversation, useHelperClient } from "@helperai/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { MessageContent, useHelperClient } from "@helperai/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useRunOnce } from "@/components/useRunOnce";
+import { BASE_PATH } from "@/components/constants";
 import { cn } from "@/lib/utils";
 
 // Static FAQs with answers - no AI needed
@@ -207,26 +207,46 @@ const StaticFAQView = ({
 };
 
 const ChatWidget = ({
-  mailboxName,
   initialMessage,
-  conversation,
   onBack,
 }: {
-  mailboxName: string;
   initialMessage: string;
-  conversation: ConversationDetails;
   onBack: () => void;
 }) => {
-  const { messages, input, handleInputChange, handleSubmit, agentTyping, status, append } = useChat({
-    conversation,
+  const { client } = useHelperClient();
+  const didSendInitial = useRef(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const fetchWithAuth = useCallback(
+    async (input: RequestInfo | URL, init?: RequestInit) => {
+      const token = await client.getToken();
+      return fetch(input, {
+        ...init,
+        headers: { ...init?.headers, Authorization: `Bearer ${token}` },
+      });
+    },
+    [client],
+  );
+
+  const { messages, input, handleInputChange, handleSubmit, status, append } = useAIChat({
+    api: `${BASE_PATH}/api/chat/instant`,
+    fetch: fetchWithAuth,
   });
 
-  useRunOnce(() => {
-    append({ role: "user", content: initialMessage });
-  });
+  useEffect(() => {
+    if (!didSendInitial.current && initialMessage) {
+      didSendInitial.current = true;
+      append({ role: "user", content: initialMessage });
+    }
+  }, [initialMessage, append]);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="bg-background">
       <div className="border-b border-border bg-card p-4">
         <div className="max-w-4xl mx-auto flex items-center gap-4">
           <Button variant="ghost" onClick={onBack} iconOnly size="sm">
@@ -236,57 +256,48 @@ const ChatWidget = ({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex flex-col gap-4">
-            {messages.map((message) => (
-              <div
-                className={cn(
-                  "rounded-xl p-4 max-w-[80%]",
-                  message.role === "user" ? "ml-auto bg-primary" : "bg-card",
-                )}
-                key={message.id}
-              >
-                <MessageContent
-                  className={cn("prose prose-sm max-w-none prose-invert", {
-                    "text-primary-foreground": message.role === "user",
-                  })}
-                  message={message}
-                />
-              </div>
-            ))}
-            {agentTyping && <div className="animate-default-pulse text-muted-foreground">Escribiendo respuesta...</div>}
-            {status === "submitted" && (
-              <div className="flex items-center gap-1">
-                <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.3s]" />
-                <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.15s]" />
-                <div className="size-2 bg-primary rounded-full animate-default-pulse" />
-              </div>
+      <div className="max-w-4xl mx-auto p-4 flex flex-col gap-4">
+        {messages.map((message) => (
+          <div
+            className={cn(
+              "rounded-xl p-4 max-w-[80%]",
+              message.role === "user" ? "ml-auto bg-primary" : "bg-card",
             )}
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-border bg-card p-4">
-        <div className="max-w-4xl mx-auto">
-          <form onSubmit={handleSubmit} className="flex gap-3">
-            <Input
-              placeholder="Escribe tu mensaje..."
-              value={input}
-              onChange={handleInputChange}
-              className="flex-1"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  handleSubmit(e);
-                }
-              }}
+            key={message.id}
+          >
+            <MessageContent
+              className={cn("prose prose-sm max-w-none prose-invert", {
+                "text-primary-foreground": message.role === "user",
+              })}
+              message={message}
             />
-            <Button type="submit">
-              Enviar
-            </Button>
-          </form>
-        </div>
+          </div>
+        ))}
+        {status === "submitted" && (
+          <div className="flex items-center gap-1">
+            <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.3s]" />
+            <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.15s]" />
+            <div className="size-2 bg-primary rounded-full animate-default-pulse" />
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+
+        <form onSubmit={handleSubmit} className="flex gap-3 pt-2">
+          <Input
+            placeholder="Escribe tu mensaje..."
+            value={input}
+            onChange={handleInputChange}
+            className="flex-1"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                handleSubmit(e);
+              }
+            }}
+          />
+          <Button type="submit">
+            Enviar
+          </Button>
+        </form>
       </div>
     </div>
   );
@@ -295,61 +306,36 @@ const ChatWidget = ({
 export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
   const [question, setQuestion] = useState("");
   const [selectedFAQ, setSelectedFAQ] = useState<(typeof LABORARIO_FAQS)[0] | null>(null);
-  const [chatConversationSlug, setChatConversationSlug] = useState<string | null>(null);
-  const [isStartingChat, setIsStartingChat] = useState(false);
+  const [chatActive, setChatActive] = useState(false);
+  const [chatQuestion, setChatQuestion] = useState("");
   const { client } = useHelperClient();
 
-  // Get conversation details when conversationSlug is available
-  const { data: conversation } = useConversation(
-    chatConversationSlug!,
-    { enableRealtime: false },
-    { enabled: !!chatConversationSlug },
-  );
+  // Pre-initialize the widget session so the token is ready when the user submits
+  useEffect(() => {
+    client.initialize();
+  }, [client]);
 
-  const handleStartChat = async (initialQuestion?: string) => {
-    setIsStartingChat(true);
-    try {
-      const result = await client.conversations.create();
-      setChatConversationSlug(result.conversationSlug);
-      if (initialQuestion) {
-        setQuestion(initialQuestion);
-      }
-    } catch {
-      setIsStartingChat(false);
-    }
+  const handleStartChat = (initialQuestion?: string) => {
+    const q = initialQuestion || question;
+    if (!q.trim()) return;
+    setChatQuestion(q);
+    setChatActive(true);
   };
 
   const handleBackToMain = () => {
-    setChatConversationSlug(null);
+    setChatActive(false);
+    setChatQuestion("");
     setSelectedFAQ(null);
     setQuestion("");
   };
 
-  // Show AI chat
-  if (chatConversationSlug && conversation) {
+  // Show AI chat — no conversation creation, no DB, just stream
+  if (chatActive) {
     return (
       <ChatWidget
-        mailboxName={mailboxName}
-        initialMessage={question}
-        conversation={conversation}
+        initialMessage={chatQuestion}
         onBack={handleBackToMain}
       />
-    );
-  }
-
-  // Show loading while creating conversation
-  if (isStartingChat) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center gap-1">
-            <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.3s]" />
-            <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.15s]" />
-            <div className="size-2 bg-primary rounded-full animate-default-pulse" />
-          </div>
-          <p className="text-muted-foreground text-sm">Conectando con soporte...</p>
-        </div>
-      </div>
     );
   }
 
@@ -392,7 +378,7 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
             />
             <button
               onClick={() => question.trim() && handleStartChat()}
-              disabled={!question.trim() || isStartingChat}
+              disabled={!question.trim()}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50 transition-colors"
             >
               <ChevronRight className="h-5 w-5" />

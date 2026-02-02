@@ -28,6 +28,7 @@ import { CHAT_MODEL, isWithinTokenLimit, MINI_MODEL } from "@/lib/ai/core";
 import { customerInfoPrompt } from "@/lib/ai/customerInfoPrompt";
 import openai from "@/lib/ai/openai";
 import { PromptInfo } from "@/lib/ai/promptInfo";
+import { getLaborarioKnowledge } from "@/lib/ai/laborarioKnowledge";
 import { CHAT_SYSTEM_PROMPT, GUIDE_INSTRUCTIONS } from "@/lib/ai/prompts";
 import { buildTools, callServerSideTool } from "@/lib/ai/tools";
 import { cacheFor } from "@/lib/cache";
@@ -172,6 +173,10 @@ const buildPromptMessages = async (
     .join("\n");
 
   let prompt = systemPrompt;
+  const laborarioKnowledge = getLaborarioKnowledge();
+  if (laborarioKnowledge) {
+    prompt += `\n${laborarioKnowledge}`;
+  }
   if (knowledgeBank) {
     prompt += `\n${knowledgeBank}`;
   }
@@ -364,21 +369,20 @@ export const generateAIResponse = async ({
   const query = lastMessage?.content || "";
 
   const coreMessages = convertToCoreMessages(messages, { tools: {} });
-  const {
-    messages: systemMessages,
-    sources,
-    promptInfo,
-    customerInfo,
-  } = await buildPromptMessages(mailbox, email, query, guideEnabled, customerInfoUrl);
+  const [
+    { messages: systemMessages, sources, promptInfo, customerInfo },
+    tools,
+  ] = await Promise.all([
+    buildPromptMessages(mailbox, email, query, guideEnabled, customerInfoUrl),
+    buildTools({
+      conversationId,
+      email,
+      includeHumanSupport: true,
+      guideEnabled,
+    }),
+  ]);
 
   if (email && customerInfo) await upsertPlatformCustomer({ email, customerInfo });
-
-  const tools = await buildTools({
-    conversationId,
-    email,
-    includeHumanSupport: true,
-    guideEnabled,
-  });
   if (readPageTool) {
     tools[readPageTool.toolName] = {
       description: readPageTool.toolDescription,
@@ -596,7 +600,7 @@ export const respondWithAI = async ({
   guideEnabled,
   onResponse,
   isHelperUser = false,
-  reasoningEnabled = true,
+  reasoningEnabled = false,
   tools,
   customerInfoUrl,
 }: {
@@ -622,14 +626,14 @@ export const respondWithAI = async ({
 }) => {
   if (conversation.status === "spam") return createTextResponse("", Date.now().toString());
 
-  const previousMessages = await loadPreviousMessages(conversation.id, messageId);
+  const [previousMessages, platformCustomer] = await Promise.all([
+    loadPreviousMessages(conversation.id, messageId),
+    userEmail ? getPlatformCustomer(userEmail) : null,
+  ]);
   const messages = appendClientMessage({
     messages: previousMessages,
     message,
   });
-
-  let platformCustomer = null;
-  if (userEmail) platformCustomer = await getPlatformCustomer(userEmail);
 
   const isPromptConversation = conversation.isPrompt;
   const isFirstMessage = messages.length === 1;
