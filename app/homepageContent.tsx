@@ -1,12 +1,12 @@
 "use client";
 
+import { useChat as useAIChat } from "@ai-sdk/react";
 import { ArrowLeft, ChevronRight, MessageCircle } from "lucide-react";
-import { useEffect, useState } from "react";
-import type { ConversationDetails } from "@helperai/client";
-import { MessageContent, useChat, useHelperClient } from "@helperai/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { MessageContent, useHelperClient } from "@helperai/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useRunOnce } from "@/components/useRunOnce";
+import { BASE_PATH } from "@/components/constants";
 import { cn } from "@/lib/utils";
 
 // Static FAQs with answers - no AI needed
@@ -207,23 +207,37 @@ const StaticFAQView = ({
 };
 
 const ChatWidget = ({
-  mailboxName,
   initialMessage,
-  conversation,
   onBack,
 }: {
-  mailboxName: string;
   initialMessage: string;
-  conversation: ConversationDetails;
   onBack: () => void;
 }) => {
-  const { messages, input, handleInputChange, handleSubmit, agentTyping, status, append } = useChat({
-    conversation,
+  const { client } = useHelperClient();
+  const didSendInitial = useRef(false);
+
+  const fetchWithAuth = useCallback(
+    async (input: RequestInfo | URL, init?: RequestInit) => {
+      const token = await client.getToken();
+      return fetch(input, {
+        ...init,
+        headers: { ...init?.headers, Authorization: `Bearer ${token}` },
+      });
+    },
+    [client],
+  );
+
+  const { messages, input, handleInputChange, handleSubmit, status, append } = useAIChat({
+    api: `${BASE_PATH}/api/chat/instant`,
+    fetch: fetchWithAuth,
   });
 
-  useRunOnce(() => {
-    append({ role: "user", content: initialMessage });
-  });
+  useEffect(() => {
+    if (!didSendInitial.current && initialMessage) {
+      didSendInitial.current = true;
+      append({ role: "user", content: initialMessage });
+    }
+  }, [initialMessage, append]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -255,7 +269,6 @@ const ChatWidget = ({
                 />
               </div>
             ))}
-            {agentTyping && <div className="animate-default-pulse text-muted-foreground">Escribiendo respuesta...</div>}
             {status === "submitted" && (
               <div className="flex items-center gap-1">
                 <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.3s]" />
@@ -295,8 +308,8 @@ const ChatWidget = ({
 export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
   const [question, setQuestion] = useState("");
   const [selectedFAQ, setSelectedFAQ] = useState<(typeof LABORARIO_FAQS)[0] | null>(null);
-  const [conversation, setConversation] = useState<ConversationDetails | null>(null);
-  const [isStartingChat, setIsStartingChat] = useState(false);
+  const [chatActive, setChatActive] = useState(false);
+  const [chatQuestion, setChatQuestion] = useState("");
   const { client } = useHelperClient();
 
   // Pre-initialize the widget session so the token is ready when the user submits
@@ -304,57 +317,27 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
     client.initialize();
   }, [client]);
 
-  const handleStartChat = async (initialQuestion?: string) => {
-    setIsStartingChat(true);
-    try {
-      const result = await client.conversations.create();
-      // Build ConversationDetails locally — the conversation is brand new and empty
-      setConversation({
-        slug: result.conversationSlug,
-        subject: null,
-        messages: [],
-        isEscalated: false,
-        experimental_guideSessions: [],
-      });
-      if (initialQuestion) {
-        setQuestion(initialQuestion);
-      }
-    } catch {
-      setIsStartingChat(false);
-    }
+  const handleStartChat = (initialQuestion?: string) => {
+    const q = initialQuestion || question;
+    if (!q.trim()) return;
+    setChatQuestion(q);
+    setChatActive(true);
   };
 
   const handleBackToMain = () => {
-    setConversation(null);
+    setChatActive(false);
+    setChatQuestion("");
     setSelectedFAQ(null);
     setQuestion("");
   };
 
-  // Show AI chat
-  if (conversation) {
+  // Show AI chat — no conversation creation, no DB, just stream
+  if (chatActive) {
     return (
       <ChatWidget
-        mailboxName={mailboxName}
-        initialMessage={question}
-        conversation={conversation}
+        initialMessage={chatQuestion}
         onBack={handleBackToMain}
       />
-    );
-  }
-
-  // Show loading while creating conversation
-  if (isStartingChat) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center gap-1">
-            <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.3s]" />
-            <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.15s]" />
-            <div className="size-2 bg-primary rounded-full animate-default-pulse" />
-          </div>
-          <p className="text-muted-foreground text-sm">Conectando con soporte...</p>
-        </div>
-      </div>
     );
   }
 
@@ -397,7 +380,7 @@ export const HomepageContent = ({ mailboxName }: { mailboxName: string }) => {
             />
             <button
               onClick={() => question.trim() && handleStartChat()}
-              disabled={!question.trim() || isStartingChat}
+              disabled={!question.trim()}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50 transition-colors"
             >
               <ChevronRight className="h-5 w-5" />

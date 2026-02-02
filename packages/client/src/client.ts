@@ -47,7 +47,7 @@ export class HelperClient {
   }
 
   private token: string | null = null;
-  private getToken = async (): Promise<string> => {
+  getToken = async (): Promise<string> => {
     if (!this.token) await this.initialize();
     return this.token!;
   };
