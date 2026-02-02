@@ -9,13 +9,13 @@ export const maxDuration = 60;
 
 export const OPTIONS = () => corsOptions("POST");
 
-const buildSystemPrompt = (mailboxName: string): string => {
+const buildSystemPrompt = async (mailboxName: string): Promise<string> => {
   let prompt = CHAT_SYSTEM_PROMPT.replace(/MAILBOX_NAME/g, mailboxName).replace(
     "{{CURRENT_DATE}}",
     new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
   );
 
-  const knowledge = getLaborarioKnowledge();
+  const knowledge = await getLaborarioKnowledge();
   if (knowledge) {
     prompt += `\n\n${knowledge}`;
   }
@@ -26,7 +26,7 @@ const buildSystemPrompt = (mailboxName: string): string => {
 export const POST = withWidgetAuth(async ({ request }, { mailbox }) => {
   const { messages }: { messages: Array<{ role: "user" | "assistant"; content: string }> } = await request.json();
 
-  const systemPrompt = buildSystemPrompt(mailbox.name);
+  const systemPrompt = await buildSystemPrompt(mailbox.name);
 
   const result = streamText({
     model: openai(CHAT_MODEL, { structuredOutputs: false }),

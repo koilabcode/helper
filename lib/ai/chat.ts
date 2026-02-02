@@ -173,7 +173,7 @@ const buildPromptMessages = async (
     .join("\n");
 
   let prompt = systemPrompt;
-  const laborarioKnowledge = getLaborarioKnowledge();
+  const laborarioKnowledge = await getLaborarioKnowledge();
   if (laborarioKnowledge) {
     prompt += `\n${laborarioKnowledge}`;
   }
