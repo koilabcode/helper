@@ -128,10 +128,9 @@ export function PublicHeader({ variant = "full", withBorder = false }: PublicHea
       }
     }
 
-    // Only fetch if not already checked this session
-    if (!cachedAuthState.checked) {
-      checkAuth();
-    }
+    // Always check auth on mount — the cache is only for initial render to avoid flicker.
+    // The iframe can't receive auth state changes from the parent page, so we must re-check.
+    checkAuth();
 
     // Always listen for auth changes (login/logout from other tabs, etc.)
     const {

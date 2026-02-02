@@ -215,6 +215,7 @@ const ChatWidget = ({
 }) => {
   const { client } = useHelperClient();
   const didSendInitial = useRef(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchWithAuth = useCallback(
     async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -239,8 +240,13 @@ const ChatWidget = ({
     }
   }, [initialMessage, append]);
 
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="bg-background">
       <div className="border-b border-border bg-card p-4">
         <div className="max-w-4xl mx-auto flex items-center gap-4">
           <Button variant="ghost" onClick={onBack} iconOnly size="sm">
@@ -250,56 +256,48 @@ const ChatWidget = ({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex flex-col gap-4">
-            {messages.map((message) => (
-              <div
-                className={cn(
-                  "rounded-xl p-4 max-w-[80%]",
-                  message.role === "user" ? "ml-auto bg-primary" : "bg-card",
-                )}
-                key={message.id}
-              >
-                <MessageContent
-                  className={cn("prose prose-sm max-w-none prose-invert", {
-                    "text-primary-foreground": message.role === "user",
-                  })}
-                  message={message}
-                />
-              </div>
-            ))}
-            {status === "submitted" && (
-              <div className="flex items-center gap-1">
-                <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.3s]" />
-                <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.15s]" />
-                <div className="size-2 bg-primary rounded-full animate-default-pulse" />
-              </div>
+      <div className="max-w-4xl mx-auto p-4 flex flex-col gap-4">
+        {messages.map((message) => (
+          <div
+            className={cn(
+              "rounded-xl p-4 max-w-[80%]",
+              message.role === "user" ? "ml-auto bg-primary" : "bg-card",
             )}
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-border bg-card p-4">
-        <div className="max-w-4xl mx-auto">
-          <form onSubmit={handleSubmit} className="flex gap-3">
-            <Input
-              placeholder="Escribe tu mensaje..."
-              value={input}
-              onChange={handleInputChange}
-              className="flex-1"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  handleSubmit(e);
-                }
-              }}
+            key={message.id}
+          >
+            <MessageContent
+              className={cn("prose prose-sm max-w-none prose-invert", {
+                "text-primary-foreground": message.role === "user",
+              })}
+              message={message}
             />
-            <Button type="submit">
-              Enviar
-            </Button>
-          </form>
-        </div>
+          </div>
+        ))}
+        {status === "submitted" && (
+          <div className="flex items-center gap-1">
+            <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.3s]" />
+            <div className="size-2 bg-primary rounded-full animate-default-pulse [animation-delay:-0.15s]" />
+            <div className="size-2 bg-primary rounded-full animate-default-pulse" />
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+
+        <form onSubmit={handleSubmit} className="flex gap-3 pt-2">
+          <Input
+            placeholder="Escribe tu mensaje..."
+            value={input}
+            onChange={handleInputChange}
+            className="flex-1"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                handleSubmit(e);
+              }
+            }}
+          />
+          <Button type="submit">
+            Enviar
+          </Button>
+        </form>
       </div>
     </div>
   );
